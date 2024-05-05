@@ -13,4 +13,4 @@ To explore Mr Nitesh's projects, simply clone this repository:
 If you're interested in contributing to Mr Nitesh's projects, please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to get started.
 
 ## License
-This portfolio is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This portfolio is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
