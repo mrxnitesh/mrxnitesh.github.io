@@ -1,72 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr. Nitesh's Website</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selfie Camera</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    #video {
+      width: 100%;
+      max-width: 600px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      transform: scaleX(-1); /* Flip horizontally */
+    }
+    #canvas {
+      display: none;
+    }
+    #gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .photo {
+      margin: 10px;
+    }
+    .photo img {
+      width: 300px;
+      height: auto;
+      border-radius: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to Mr. Nitesh's Website</h1>
-        <button id="themeToggle">Toggle Theme</button>
-    </header>
-    
-    <nav>
-        <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#portfolio">Portfolio</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
+  <div class="container">
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <button onclick="takePicture()">Take Picture</button>
+    <div id="gallery"></div>
+  </div>
 
-    <main>
-        <section id="home">
-            <h2>Home</h2>
-            <p>Welcome to my website!</p>
-        </section>
-        
-        <section id="about">
-            <h2>About Me</h2>
-            <p>I'm Mr. Nitesh, a web developer.</p>
-        </section>
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    let stream;
 
-        <!-- Add more sections as needed -->
-    </main>
+    // Access webcam
+    async function getMedia() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 4096 }, height: { ideal: 2160 } } });
+        video.srcObject = stream;
+      } catch (err) {
+        console.error("Error accessing the webcam: ", err);
+      }
+    }
 
-    <footer>
-        <p>&copy; 2024 Mr. Nitesh. All rights reserved.</p>
-        <div class="social">
-            <a href="#"><img src="facebook-icon.png" alt="Facebook"></a>
-            <a href="#"><img src="twitter-icon.png" alt="Twitter"></a>
-            <a href="#"><img src="linkedin-icon.png" alt="LinkedIn"></a>
-        </div>
+    getMedia();
 
-        <section id="camera">
-            <h2>Camera</h2>
-            <video id="video" width="640" height="480" autoplay></video>
-            <button id="captureButton">Take Photo</button>
-            <canvas id="canvas" width="640" height="480"></canvas>
-        </section>
-        <button onclick="downloadPhoto()">Download Photo</button>
-        
+    // Take picture
+    function takePicture() {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.translate(canvas.width, 0);
+      context.scale(-1, 1);
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imgUrl = canvas.toDataURL('image/png');
+      addToGallery(imgUrl);
+    }
 
+    // Add photo to gallery
+    function addToGallery(imgUrl) {
+      const gallery = document.getElementById('gallery');
+      const photoDiv = document.createElement('div');
+      photoDiv.classList.add('photo');
+      const img = document.createElement('img');
+      img.src = imgUrl;
+      photoDiv.appendChild(img);
+      gallery.appendChild(photoDiv);
+      addDownloadButton(photoDiv, imgUrl);
+    }
 
-
-
-
-
-
-    </footer>
-
-
-
-
-
-
-    <script src="script.js"></script>
-
+    // Add download button
+    function addDownloadButton(photoDiv, imgUrl) {
+      const downloadBtn = document.createElement('a');
+      downloadBtn.href = imgUrl;
+      downloadBtn.download = 'selfie.png';
+      downloadBtn.innerHTML = 'Download';
+      photoDiv.appendChild(downloadBtn);
+    }
+  </script>
 </body>
 </html>
-
